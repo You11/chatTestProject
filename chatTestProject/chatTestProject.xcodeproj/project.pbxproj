@@ -16,7 +16,10 @@
 		B53FB5FF20A882390002DC31 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B53FB5FD20A882390002DC31 /* Main.storyboard */; };
 		B53FB60120A882390002DC31 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B53FB60020A882390002DC31 /* Assets.xcassets */; };
 		B53FB60420A882390002DC31 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B53FB60220A882390002DC31 /* LaunchScreen.storyboard */; };
+		B59B79FE20AB2CF200CC3DAE /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = B59B79FD20AB2CF200CC3DAE /* Message.swift */; };
+		B5B7626320AAF56F00ACEDF8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B5B7626220AAF56F00ACEDF8 /* GoogleService-Info.plist */; };
 		B5C4CCC320A9A7820079B37C /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = B5C4CCC220A9A7820079B37C /* Podfile */; };
+		B5D4B32920AC4216000243AB /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D4B32820AC4216000243AB /* LoginViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,7 +35,10 @@
 		B53FB60020A882390002DC31 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B53FB60320A882390002DC31 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B53FB60520A882390002DC31 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B59B79FD20AB2CF200CC3DAE /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		B5B7626220AAF56F00ACEDF8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B5C4CCC220A9A7820079B37C /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
+		B5D4B32820AC4216000243AB /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		F642A69D2731B7848AB51FCA /* Pods-chatTestProject.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-chatTestProject.release.xcconfig"; path = "Pods/Target Support Files/Pods-chatTestProject/Pods-chatTestProject.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -75,9 +81,12 @@
 				B5213DB720A88AEA00BDEC6C /* FriendTableViewCell.swift */,
 				B5213DB520A889E800BDEC6C /* FriendsTableViewController.swift */,
 				B53FB5FB20A882390002DC31 /* ChatViewController.swift */,
+				B59B79FD20AB2CF200CC3DAE /* Message.swift */,
+				B5D4B32820AC4216000243AB /* LoginViewController.swift */,
 				B53FB5FD20A882390002DC31 /* Main.storyboard */,
 				B53FB60020A882390002DC31 /* Assets.xcassets */,
 				B53FB60220A882390002DC31 /* LaunchScreen.storyboard */,
+				B5B7626220AAF56F00ACEDF8 /* GoogleService-Info.plist */,
 				B53FB60520A882390002DC31 /* Info.plist */,
 			);
 			path = chatTestProject;
@@ -112,6 +121,7 @@
 				B53FB5F320A882380002DC31 /* Frameworks */,
 				B53FB5F420A882380002DC31 /* Resources */,
 				850F26F67F87D858EF63A08C /* [CP] Embed Pods Frameworks */,
+				000A8C5CFBC366C6D205E56E /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -162,6 +172,7 @@
 			files = (
 				B53FB60420A882390002DC31 /* LaunchScreen.storyboard in Resources */,
 				B53FB60120A882390002DC31 /* Assets.xcassets in Resources */,
+				B5B7626320AAF56F00ACEDF8 /* GoogleService-Info.plist in Resources */,
 				B5C4CCC320A9A7820079B37C /* Podfile in Resources */,
 				B53FB5FF20A882390002DC31 /* Main.storyboard in Resources */,
 			);
@@ -170,6 +181,38 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		000A8C5CFBC366C6D205E56E /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-chatTestProject/Pods-chatTestProject-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseUI/FirebaseAuthUI.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseUI/FirebaseFacebookAuthUI.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseUI/FirebaseGoogleAuthUI.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseUI/FirebasePhoneAuthUI.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseUI/FirebaseTwitterAuthUI.bundle",
+				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
+				"${PODS_ROOT}/TwitterKit/iOS/TwitterKit.framework/TwitterKitResources.bundle",
+				"${PODS_ROOT}/TwitterKit/iOS/TwitterKit.framework/TwitterShareExtensionUIResources.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FirebaseAuthUI.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FirebaseFacebookAuthUI.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FirebaseGoogleAuthUI.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FirebasePhoneAuthUI.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FirebaseTwitterAuthUI.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleSignIn.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/TwitterKitResources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/TwitterShareExtensionUIResources.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-chatTestProject/Pods-chatTestProject-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		850F26F67F87D858EF63A08C /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -177,17 +220,43 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-chatTestProject/Pods-chatTestProject-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Bolts/Bolts.framework",
+				"${BUILT_PRODUCTS_DIR}/BoringSSL/openssl.framework",
+				"${BUILT_PRODUCTS_DIR}/FBSDKCoreKit/FBSDKCoreKit.framework",
+				"${BUILT_PRODUCTS_DIR}/FBSDKLoginKit/FBSDKLoginKit.framework",
+				"${BUILT_PRODUCTS_DIR}/GTMOAuth2/GTMOAuth2.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
 				"${BUILT_PRODUCTS_DIR}/MessageKit/MessageKit.framework",
+				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
+				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
+				"${PODS_ROOT}/TwitterCore/iOS/TwitterCore.framework",
+				"${PODS_ROOT}/TwitterKit/iOS/TwitterKit.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC/GRPCClient.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-ProtoRPC/ProtoRPC.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-RxLibrary/RxLibrary.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bolts.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKCoreKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKLoginKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMOAuth2.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MessageKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TwitterCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TwitterKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRPCClient.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ProtoRPC.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxLibrary.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
@@ -221,9 +290,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B5D4B32920AC4216000243AB /* LoginViewController.swift in Sources */,
 				B53FB5FC20A882390002DC31 /* ChatViewController.swift in Sources */,
 				B53FB5FA20A882390002DC31 /* AppDelegate.swift in Sources */,
 				B5213DBA20A88BB700BDEC6C /* User.swift in Sources */,
+				B59B79FE20AB2CF200CC3DAE /* Message.swift in Sources */,
 				B5213DB620A889E800BDEC6C /* FriendsTableViewController.swift in Sources */,
 				B5213DB820A88AEA00BDEC6C /* FriendTableViewCell.swift in Sources */,
 			);

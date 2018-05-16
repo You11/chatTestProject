@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Aqy-kg-MGI">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="gIj-eH-EMw">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -33,12 +33,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2756" y="143"/>
+            <point key="canvasLocation" x="3458" y="105"/>
         </scene>
         <!--Friends-->
         <scene sceneID="P0G-OJ-a1L">
             <objects>
-                <tableViewController id="xnY-Ny-qGt" customClass="FriendsTableViewController" customModule="chatTestProject" sceneMemberID="viewController">
+                <tableViewController restorationIdentifier="FriendsViewController" storyboardIdentifier="FriendsViewController" id="xnY-Ny-qGt" customClass="FriendsTableViewController" customModule="chatTestProject" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="VrO-7R-hNB">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -62,7 +62,7 @@
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="friendNameLabel" destination="4cK-HG-OYM" id="WMx-Hc-ra0"/>
-                                    <segue destination="BYZ-38-t0r" kind="show" id="Zgc-34-MWd"/>
+                                    <segue destination="BYZ-38-t0r" kind="show" id="vQJ-y0-Ekh"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -75,7 +75,33 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vy4-bP-6d7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1976.8" y="143.47826086956522"/>
+            <point key="canvasLocation" x="2769" y="105"/>
+        </scene>
+        <!--meow-->
+        <scene sceneID="txd-To-CQh">
+            <objects>
+                <viewController title="meow" id="gIj-eH-EMw" customClass="LoginViewController" customModule="chatTestProject" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="DEL-U5-VW6">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="s1i-kG-vm8">
+                                <rect key="frame" x="18" y="20" width="42" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Log In"/>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="ueE-Lc-xeT"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="Fly-fg-iQt"/>
+                    <connections>
+                        <outlet property="loginButton" destination="s1i-kG-vm8" id="U2D-iU-n9U"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Tzd-TT-cQD" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1369" y="105"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="p9G-br-72N">
@@ -88,12 +114,12 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="xnY-Ny-qGt" kind="relationship" relationship="rootViewController" id="g4R-Vm-hfK"/>
+                        <segue destination="xnY-Ny-qGt" kind="relationship" relationship="rootViewController" id="mBP-dW-Y83"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Cqt-ml-43Q" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1193" y="565"/>
+            <point key="canvasLocation" x="2084" y="105"/>
         </scene>
     </scenes>
 </document>
