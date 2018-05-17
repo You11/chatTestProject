@@ -23,10 +23,29 @@ class LoginViewController: UIViewController, FUIAuthDelegate {
         loginButton.addTarget(self, action: #selector(login), for: .touchUpInside)
     }
     
+    //after login
     func authUI(_ authUI: FUIAuth, didSignInWith authDataResult: AuthDataResult?, error: Error?) {
-        present(FriendsTableViewController(), animated: true, completion: nil)
+        let db = Firestore.firestore()
+        let friends: Array<String> = []
+        if let user = authDataResult?.user {
+            db.collection("users").document("\(user.uid)").setData([
+                "name": user.displayName ?? "",
+                "profile_image": user.photoURL ?? "",
+                "friends": friends
+            ]) { err in
+                if let err = err {
+                    fatalError(err.localizedDescription)
+                } else {
+                    print("Document successfully written!")
+                    self.present(FriendsTableViewController(), animated: true, completion: nil)
+                }
+            }
+        } else {
+            fatalError("login went wrong")
+        }
     }
     
+    //login into app
     @objc func login(controller: UINavigationController) {
         let authUI = FUIAuth.defaultAuthUI()
         authUI?.delegate = self
@@ -34,17 +53,12 @@ class LoginViewController: UIViewController, FUIAuthDelegate {
         
         self.present(authViewController, animated: true, completion: nil)
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
     override func viewWillAppear(_ animated: Bool) {
         handle = Auth.auth().addStateDidChangeListener { (auth, user) in
             if (user != nil) {
                 let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                let newViewController = storyBoard.instantiateViewController(withIdentifier: "FriendsViewController") as! FriendsTableViewController
+                let newViewController = storyBoard.instantiateViewController(withIdentifier: "NavigationController") as! UINavigationController
                 self.present(newViewController, animated: true, completion: nil)
             }
         }

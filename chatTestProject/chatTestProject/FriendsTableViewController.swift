@@ -7,16 +7,19 @@
 //
 
 import UIKit
+import FirebaseUI
 
-class FriendsTableViewController: UITableViewController {
+class FriendsTableViewController: UITableViewController, FUIAuthDelegate {
     
     //MARK: Properties
-    var friends = [User]()
-
+    private var friends = [User]()
+    private var handle: AuthStateDidChangeListenerHandle?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         loadSampleFriends()
+        
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -24,10 +27,33 @@ class FriendsTableViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
+    
+    @IBAction func signOut(_ sender: UIBarButtonItem) {
+        print("function called")
+        let authUI = FUIAuth.defaultAuthUI()
+        authUI?.delegate = self
+        do {
+            try authUI?.signOut()
+            print("Signed out!")
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        handle = Auth.auth().addStateDidChangeListener { (auth, user) in
+            print("meow1")
+            if (auth.currentUser == nil) {
+                print("meow2")
+                let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                let newViewController = storyBoard.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+                self.present(newViewController, animated: true, completion: nil)
+            }
+        }
+    }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    override func viewWillDisappear(_ animated: Bool) {
+        Auth.auth().removeStateDidChangeListener(handle!)
     }
 
     // MARK: - Table view data source
