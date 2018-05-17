@@ -28,16 +28,22 @@ class LoginViewController: UIViewController, FUIAuthDelegate {
         let db = Firestore.firestore()
         let friends: Array<String> = []
         if let user = authDataResult?.user {
-            db.collection("users").document("\(user.uid)").setData([
-                "name": user.displayName ?? "",
-                "profile_image": user.photoURL ?? "",
-                "friends": friends
-            ]) { err in
-                if let err = err {
-                    fatalError(err.localizedDescription)
-                } else {
-                    print("Document successfully written!")
-                    self.present(FriendsTableViewController(), animated: true, completion: nil)
+            db.collection("users").document("\(user.uid)").getDocument { (document, error) in
+                if let document = document, !document.exists {
+                    //create new user
+                    db.collection("users").document("\(user.uid)").setData([
+                        "name": user.displayName ?? "",
+                        "profile_image": user.photoURL ?? "",
+                        "date_creation": NSDate.init(),
+                        "friends": friends
+                    ]) { err in
+                        if let err = err {
+                            fatalError(err.localizedDescription)
+                        } else {
+                            print("User created!")
+                            self.present(FriendsTableViewController(), animated: true, completion: nil)
+                        }
+                    }
                 }
             }
         } else {
