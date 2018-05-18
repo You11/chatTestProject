@@ -61,6 +61,7 @@ class LoginViewController: UIViewController, FUIAuthDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         handle = Auth.auth().addStateDidChangeListener { (auth, user) in
             if (user != nil) {
                 let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
@@ -71,6 +72,7 @@ class LoginViewController: UIViewController, FUIAuthDelegate {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         Auth.auth().removeStateDidChangeListener(handle!)
     }
     

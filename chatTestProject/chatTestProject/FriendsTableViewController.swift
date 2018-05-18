@@ -18,9 +18,8 @@ class FriendsTableViewController: UITableViewController, FUIAuthDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        loadSampleFriends()
+        loadFriends()
         
-
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -29,22 +28,19 @@ class FriendsTableViewController: UITableViewController, FUIAuthDelegate {
     }
     
     @IBAction func signOut(_ sender: UIBarButtonItem) {
-        print("function called")
         let authUI = FUIAuth.defaultAuthUI()
         authUI?.delegate = self
         do {
             try authUI?.signOut()
-            print("Signed out!")
         } catch {
             fatalError(error.localizedDescription)
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         handle = Auth.auth().addStateDidChangeListener { (auth, user) in
-            print("meow1")
             if (auth.currentUser == nil) {
-                print("meow2")
                 let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
                 let newViewController = storyBoard.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
                 self.present(newViewController, animated: true, completion: nil)
@@ -53,6 +49,7 @@ class FriendsTableViewController: UITableViewController, FUIAuthDelegate {
     }
 
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         Auth.auth().removeStateDidChangeListener(handle!)
     }
 
@@ -127,9 +124,68 @@ class FriendsTableViewController: UITableViewController, FUIAuthDelegate {
     */
 
     //MARK: Private Methods
-    private func loadSampleFriends() {
-        let friend1 = User(name: "meow")
-        let friend2 = User(name: "xd")
-        friends += [friend1, friend2]
+    private func loadFriends() {
+        friends.removeAll()
+        
+        let db = Firestore.firestore()
+        let currentUserId = Auth.auth().currentUser?.uid
+        
+        db.collection("users").document(currentUserId!).getDocument { (document, error) in
+            let group = DispatchGroup()
+            guard let friendsIds = document?.get("friends") as! [String]? else {
+                return
+            }
+            for id in friendsIds {
+                group.enter()
+                db.collection("users").document(id).getDocument { (document, error) in
+                    let friendName = document?.get("name") as! String
+                    self.friends += [User(name: friendName)]
+                    group.leave()
+                }
+            }
+            
+            group.notify(queue: .main) {
+                self.tableView.reloadData()
+            }
+        }
+    }
+    
+    @IBAction func unwindToFriendList(sender: UIStoryboardSegue) {
+        if let addFriendViewController = sender.source as? AddFriendViewController, let friendId = addFriendViewController.friendIdTextField.text {
+            
+            let db = Firestore.firestore()
+            let group = DispatchGroup()
+            group.enter()
+            db.collection("users").document("\(friendId)").getDocument { (document, error) in
+                if let document = document, document.exists {
+                    
+                    let currentUserId = Auth.auth().currentUser?.uid
+                    
+                    db.collection("users").document(currentUserId!).getDocument { (document, error) in
+                        var friends = document?.get("friends") as! [String]
+                        friends += ["\(friendId)"]
+                        
+                        db.collection("users").document(currentUserId!).updateData([
+                            "friends": friends
+                        ]) { err in
+                            if let err = err {
+                                print("Error updating document: \(err)")
+                                group.leave()
+                            } else {
+                                print("Document successfully updated")
+                                group.leave()
+                            }
+                        }
+                    }
+                } else {
+                    print("friend not found")
+                    group.leave()
+                }
+            }
+            
+            group.notify(queue: .main) {
+                self.loadFriends()
+            }
+        }
     }
 }

@@ -17,6 +17,7 @@
 		B53FB60120A882390002DC31 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B53FB60020A882390002DC31 /* Assets.xcassets */; };
 		B53FB60420A882390002DC31 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B53FB60220A882390002DC31 /* LaunchScreen.storyboard */; };
 		B59B79FE20AB2CF200CC3DAE /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = B59B79FD20AB2CF200CC3DAE /* Message.swift */; };
+		B5A40A6620ADC1BE001A6905 /* AddFriendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5A40A6520ADC1BE001A6905 /* AddFriendViewController.swift */; };
 		B5B7626320AAF56F00ACEDF8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B5B7626220AAF56F00ACEDF8 /* GoogleService-Info.plist */; };
 		B5C4CCC320A9A7820079B37C /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = B5C4CCC220A9A7820079B37C /* Podfile */; };
 		B5D4B32920AC4216000243AB /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5D4B32820AC4216000243AB /* LoginViewController.swift */; };
@@ -36,6 +37,7 @@
 		B53FB60320A882390002DC31 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B53FB60520A882390002DC31 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B59B79FD20AB2CF200CC3DAE /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		B5A40A6520ADC1BE001A6905 /* AddFriendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFriendViewController.swift; sourceTree = "<group>"; };
 		B5B7626220AAF56F00ACEDF8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B5C4CCC220A9A7820079B37C /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		B5D4B32820AC4216000243AB /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 			isa = PBXGroup;
 			children = (
 				B53FB5F920A882390002DC31 /* AppDelegate.swift */,
+				B5A40A6520ADC1BE001A6905 /* AddFriendViewController.swift */,
 				B5213DB920A88BB700BDEC6C /* User.swift */,
 				B5213DB720A88AEA00BDEC6C /* FriendTableViewCell.swift */,
 				B5213DB520A889E800BDEC6C /* FriendsTableViewController.swift */,
@@ -290,6 +293,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B5A40A6620ADC1BE001A6905 /* AddFriendViewController.swift in Sources */,
 				B5D4B32920AC4216000243AB /* LoginViewController.swift in Sources */,
 				B53FB5FC20A882390002DC31 /* ChatViewController.swift in Sources */,
 				B53FB5FA20A882390002DC31 /* AppDelegate.swift in Sources */,

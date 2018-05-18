@@ -35,6 +35,54 @@
             </objects>
             <point key="canvasLocation" x="3458" y="105"/>
         </scene>
+        <!--Add Friend-->
+        <scene sceneID="mT1-OE-l1g">
+            <objects>
+                <viewController id="i0b-CD-rA0" customClass="AddFriendViewController" customModule="chatTestProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="9vr-t0-HZ9">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="ID:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6eV-od-bk3">
+                                <rect key="frame" x="16" y="90" width="21" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Add ID" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2Wm-KG-53L">
+                                <rect key="frame" x="16" y="119" width="343" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="KLJ-ip-TIk"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Add Friend" id="IVa-vm-zco">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="1ff-03-eU4">
+                            <connections>
+                                <action selector="cancel:" destination="i0b-CD-rA0" id="IM8-nM-zbq"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="save" id="XyN-hg-h0n">
+                            <connections>
+                                <segue destination="r0p-vt-0eg" kind="unwind" unwindAction="unwindToFriendListWithSender:" id="NDi-3x-O3z"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="friendIdTextField" destination="2Wm-KG-53L" id="s2d-AB-3iU"/>
+                        <outlet property="saveButton" destination="XyN-hg-h0n" id="xl0-th-s0K"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="lIW-3V-NA5" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="r0p-vt-0eg" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="3456.8000000000002" y="839.73013493253382"/>
+        </scene>
         <!--Friends-->
         <scene sceneID="P0G-OJ-a1L">
             <objects>
@@ -72,9 +120,14 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Friends" id="ODQ-Ua-EqW">
-                        <barButtonItem key="rightBarButtonItem" title="Sign out" id="7BR-VB-d6G">
+                        <barButtonItem key="leftBarButtonItem" title="Sign out" id="7BR-VB-d6G">
                             <connections>
                                 <action selector="signOut:" destination="xnY-Ny-qGt" id="nfr-M7-two"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="4WK-QQ-Y5U">
+                            <connections>
+                                <segue destination="j1w-F9-J1G" kind="presentation" identifier="AddFriend" id="gpP-7t-c7o"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -111,7 +164,6 @@
         <!--Navigation Controller-->
         <scene sceneID="p9G-br-72N">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Cqt-ml-43Q" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController restorationIdentifier="NavigationController" storyboardIdentifier="NavigationController" automaticallyAdjustsScrollViewInsets="NO" id="Aqy-kg-MGI" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="x3u-TC-iWu">
@@ -123,8 +175,27 @@
                         <segue destination="xnY-Ny-qGt" kind="relationship" relationship="rootViewController" id="mBP-dW-Y83"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Cqt-ml-43Q" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2020" y="105"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="yyY-Ae-lJx">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="j1w-F9-J1G" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="b7p-Mu-C0O">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="i0b-CD-rA0" kind="relationship" relationship="rootViewController" id="mVR-7z-k1Q"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="bm1-z2-wja" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2769" y="840"/>
         </scene>
     </scenes>
 </document>
