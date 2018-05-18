@@ -11,9 +11,11 @@ import UIKit
 class User {
     
     //MARK: Properties
+    var id: String
     var name: String
     
-    init(name: String) {
+    init(id: String, name: String) {
+        self.id = id
         self.name = name
     }
 }

@@ -12,17 +12,25 @@ import MessageKit
 class ChatViewController: MessagesViewController {
     
     var messagesList: [Message] = []
+    var friend: User? = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        messagesList.append(Message(text: "123", sender: Sender(id: "2", displayName: "pidor"), messageId: "1", sentDate: Date.init()))
+        messagesList.append(Message(text: (friend?.id)!, sender: Sender(id: "2", displayName: "pidor"), messageId: "1", sentDate: Date.init()))
         messagesList.append(Message(text: "321", sender: Sender(id: "1", displayName: "meow"), messageId: "2", sentDate: Date.init()))
+        
+        messageInputBar.sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
         
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
         // Do any additional setup after loading the view, typically from a nib.
+    }
+    
+    @objc private func sendMessage() {
+        messagesList.append(Message(text: messageInputBar.inputTextView.text, sender: Sender(id: "1", displayName: "123"), messageId: "3", sentDate: Date.init()))
+        messagesCollectionView.reloadData()
     }
     
     override func didReceiveMemoryWarning() {

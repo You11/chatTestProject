@@ -113,15 +113,37 @@ class FriendsTableViewController: UITableViewController, FUIAuthDelegate {
     }
     */
 
-    /*
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+        switch(segue.identifier ?? "") {
+            
+        case "AddFriend":
+            return
+            
+        case "ShowChat":
+            guard let chatViewContoller = segue.destination as? ChatViewController else {
+                fatalError("Unexpected destination: \(segue.destination)")
+            }
+            
+            guard let selectedCell = sender as? FriendTableViewCell else {
+                fatalError("Unexpected sender: \(sender)")
+            }
+            
+            guard let indexPath = tableView.indexPath(for: selectedCell) else {
+                fatalError("The selected cell is not being displayed by the table")
+            }
+            
+            let selectedFriend = friends[indexPath.row]
+            chatViewContoller.friend = selectedFriend
+        default:
+            fatalError("Unexpected Segue Identifier; \(segue.identifier)")
+        }
     }
-    */
 
     //MARK: Private Methods
     private func loadFriends() {
@@ -135,11 +157,12 @@ class FriendsTableViewController: UITableViewController, FUIAuthDelegate {
             guard let friendsIds = document?.get("friends") as! [String]? else {
                 return
             }
+            
             for id in friendsIds {
                 group.enter()
                 db.collection("users").document(id).getDocument { (document, error) in
                     let friendName = document?.get("name") as! String
-                    self.friends += [User(name: friendName)]
+                    self.friends += [User(id: id, name: friendName)]
                     group.leave()
                 }
             }
@@ -150,6 +173,7 @@ class FriendsTableViewController: UITableViewController, FUIAuthDelegate {
         }
     }
     
+    //MARK: Unwind
     @IBAction func unwindToFriendList(sender: UIStoryboardSegue) {
         if let addFriendViewController = sender.source as? AddFriendViewController, let friendId = addFriendViewController.friendIdTextField.text {
             
@@ -177,6 +201,12 @@ class FriendsTableViewController: UITableViewController, FUIAuthDelegate {
                             }
                         }
                     }
+                    
+                    db.collection("chats").addDocument(data: [
+                        "user_ids": [currentUserId!, friendId],
+                        "name": "",
+                        "messages": []
+                        ])
                 } else {
                     print("friend not found")
                     group.leave()
