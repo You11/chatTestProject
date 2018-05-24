@@ -8,29 +8,30 @@
 
 import Foundation
 import MessageKit
+import FirebaseUI
 
 class Message: MessageType {
+    
+    var sentDate: Date
     
     var sender: Sender
     
     var messageId: String
     
-    var sentDate: Date
-    
     var data: MessageData
     
-    private init(sender: Sender, messageId: String, sentDate: Date, data: MessageData) {
+    private init(sender: Sender, messageId: String, sentDate: Timestamp, data: MessageData) {
         self.sender = sender
         self.messageId = messageId
-        self.sentDate = sentDate
+        self.sentDate = sentDate.dateValue()
         self.data = data
     }
     
-    convenience init(text: String, sender: Sender, messageId: String, sentDate: Date) {
+    convenience init(text: String, sender: Sender, messageId: String, sentDate: Timestamp) {
         self.init(sender: sender, messageId: messageId, sentDate: sentDate, data: .text(text))
     }
     
-    convenience init(emoji: String, sender: Sender, messageId: String, sentDate: Date) {
+    convenience init(emoji: String, sender: Sender, messageId: String, sentDate: Timestamp) {
         self.init(sender: sender, messageId: messageId, sentDate: sentDate, data: .emoji(emoji))
     }
 }

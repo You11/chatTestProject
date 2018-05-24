@@ -35,13 +35,14 @@ class LoginViewController: UIViewController, FUIAuthDelegate {
                         "name": user.displayName ?? "",
                         "profile_image": user.photoURL ?? "",
                         "date_creation": NSDate.init(),
-                        "friends": friends
+                        "friends": friends,
+                        "chats_ids": []
                     ]) { err in
                         if let err = err {
                             fatalError(err.localizedDescription)
                         } else {
                             print("User created!")
-                            self.present(FriendsTableViewController(), animated: true, completion: nil)
+                            self.present(ChatsTableViewController(), animated: true, completion: nil)
                         }
                     }
                 }

@@ -8,17 +8,39 @@
 
 import UIKit
 import MessageKit
+import FirebaseUI
 
 class ChatViewController: MessagesViewController {
     
     var messagesList: [Message] = []
-    var friend: User? = nil
+    var currentChat: Chat? = nil
+    var messageCount = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        messagesList.append(Message(text: (friend?.id)!, sender: Sender(id: "2", displayName: "pidor"), messageId: "1", sentDate: Date.init()))
-        messagesList.append(Message(text: "321", sender: Sender(id: "1", displayName: "meow"), messageId: "2", sentDate: Date.init()))
+        //check if null somehow
+        guard let currentChat = self.currentChat else {
+            return
+        }
+        
+        let db = Firestore.firestore()
+        db.collection("chats").document(currentChat.id).addSnapshotListener { (document, error) in
+            self.messagesList.removeAll()
+            
+            let messagesFromFirestore = document?.get("messages") as! [[String: Any]]
+            for message in messagesFromFirestore {
+                let text = message["text"] as! String
+                let sentDate = message["sentDate"] as! Timestamp
+                let senderId = message["sender"] as! String
+                
+                self.messagesList.append(Message(text: text, sender: Sender(id: senderId, displayName: "user"), messageId: String(self.messageCount), sentDate: sentDate))
+                
+                self.messageCount += 1
+            }
+            
+            self.messagesCollectionView.reloadData()
+        }
         
         messageInputBar.sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
         
@@ -26,10 +48,46 @@ class ChatViewController: MessagesViewController {
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
         // Do any additional setup after loading the view, typically from a nib.
+        
     }
     
     @objc private func sendMessage() {
-        messagesList.append(Message(text: messageInputBar.inputTextView.text, sender: Sender(id: "1", displayName: "123"), messageId: "3", sentDate: Date.init()))
+        let db = Firestore.firestore()
+        //check if null somehow
+        guard let currentChat = self.currentChat?.id else {
+            return
+        }
+//        let group = DispatchGroup()
+//        group.enter()
+        
+        let messageText = messageInputBar.inputTextView.text as String
+        let message = Message(text: messageText, sender: Sender(id: getCurrentUserId(), displayName: "user"), messageId: String(self.messageCount), sentDate: Timestamp.init())
+        
+        db.collection("chats").document(currentChat).getDocument() { (document, error) in
+            var messagesFromFirestore = document?.get("messages") as! [[String: Any]]
+            let newMessage = [
+                "text": messageText,
+                "sentDate": message.sentDate,
+                "sender": message.sender.id
+                ] as [String : Any]
+            messagesFromFirestore.append(newMessage)
+            
+            db.collection("chats").document(currentChat).setData([
+                "messages": messagesFromFirestore
+            ], merge: true) { err in
+                if let err = err {
+                    print("Error sending message: \(err)")
+                    //                group.leave()
+                } else {
+                    print("Message sent!")
+                    //                group.leave()
+                }
+            }
+        }
+        
+        messagesList.append(message)
+        self.messageCount += 1
+        
         messagesCollectionView.reloadData()
     }
     
@@ -41,7 +99,7 @@ class ChatViewController: MessagesViewController {
 
 extension ChatViewController: MessagesDataSource {
     func currentSender() -> Sender {
-        return Sender(id: "1", displayName: "meow")
+        return Sender(id: getCurrentUserId(), displayName: "me")
     }
     
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
@@ -65,4 +123,11 @@ extension ChatViewController: MessagesLayoutDelegate {
         return CGFloat(50)
     }
     
+}
+
+private func getCurrentUserId() -> String {
+    guard let currentUser = Auth.auth().currentUser?.uid else {
+        fatalError("uid is nil")
+    }
+    return currentUser
 }

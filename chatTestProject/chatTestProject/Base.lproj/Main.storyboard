@@ -77,13 +77,13 @@
         <!--Friends-->
         <scene sceneID="P0G-OJ-a1L">
             <objects>
-                <tableViewController restorationIdentifier="FriendsViewController" storyboardIdentifier="FriendsViewController" id="xnY-Ny-qGt" customClass="FriendsTableViewController" customModule="chatTestProject" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController restorationIdentifier="FriendsViewController" storyboardIdentifier="FriendsViewController" id="xnY-Ny-qGt" customClass="ChatsTableViewController" customModule="chatTestProject" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleAspectFit" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="VrO-7R-hNB">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="FriendTableViewCell" id="Hd7-h7-EdK" customClass="FriendTableViewCell" customModule="chatTestProject">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ChatTableViewCell" id="Hd7-h7-EdK" customClass="ChatTableViewCell" customModule="chatTestProject">
                                 <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Hd7-h7-EdK" id="Vkd-oT-Wre">
@@ -100,7 +100,7 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="friendNameLabel" destination="4cK-HG-OYM" id="WMx-Hc-ra0"/>
+                                    <outlet property="chatNameLabel" destination="4cK-HG-OYM" id="WMx-Hc-ra0"/>
                                     <segue destination="BYZ-38-t0r" kind="show" identifier="ShowChat" id="vQJ-y0-Ekh"/>
                                 </connections>
                             </tableViewCell>
@@ -127,10 +127,10 @@
             </objects>
             <point key="canvasLocation" x="2769" y="105"/>
         </scene>
-        <!--meow-->
+        <!--Login-->
         <scene sceneID="txd-To-CQh">
             <objects>
-                <viewController restorationIdentifier="LoginViewController" storyboardIdentifier="LoginViewController" title="meow" id="gIj-eH-EMw" customClass="LoginViewController" customModule="chatTestProject" sceneMemberID="viewController">
+                <viewController restorationIdentifier="LoginViewController" storyboardIdentifier="LoginViewController" title="Login" id="gIj-eH-EMw" customClass="LoginViewController" customModule="chatTestProject" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="DEL-U5-VW6">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

@@ -8,10 +8,10 @@
 
 import UIKit
 
-class FriendTableViewCell: UITableViewCell {
+class ChatTableViewCell: UITableViewCell {
 
     //MARK: Properties
-    @IBOutlet weak var friendNameLabel: UILabel!
+    @IBOutlet weak var chatNameLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

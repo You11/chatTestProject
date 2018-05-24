@@ -9,16 +9,16 @@
 import UIKit
 import FirebaseUI
 
-class FriendsTableViewController: UITableViewController, FUIAuthDelegate {
+class ChatsTableViewController: UITableViewController, FUIAuthDelegate {
     
     //MARK: Properties
-    private var friends = [User]()
+    private var chats = [Chat]()
     private var handle: AuthStateDidChangeListenerHandle?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        loadFriends()
+        loadChats()
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -62,18 +62,18 @@ class FriendsTableViewController: UITableViewController, FUIAuthDelegate {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return friends.count
+        return chats.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellIdentifier = "FriendTableViewCell"
+        let cellIdentifier = "ChatTableViewCell"
         
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? FriendTableViewCell else {
-            fatalError("The dequeued cell is not an instance of FriendTableViewCell.")
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? ChatTableViewCell else {
+            fatalError("The dequeued cell is not an instance of ChatTableViewCell.")
         }
 
-        let friend = friends[indexPath.row]
-        cell.friendNameLabel.text = friend.name
+        let chat = chats[indexPath.row]
+        cell.chatNameLabel.text = chat.name
 
         return cell
     }
@@ -130,39 +130,39 @@ class FriendsTableViewController: UITableViewController, FUIAuthDelegate {
                 fatalError("Unexpected destination: \(segue.destination)")
             }
             
-            guard let selectedCell = sender as? FriendTableViewCell else {
-                fatalError("Unexpected sender: \(sender)")
+            guard let selectedCell = sender as? ChatTableViewCell else {
+                fatalError("Unexpected sender: \(sender ?? "Identifier not found")")
             }
             
             guard let indexPath = tableView.indexPath(for: selectedCell) else {
                 fatalError("The selected cell is not being displayed by the table")
             }
             
-            let selectedFriend = friends[indexPath.row]
-            chatViewContoller.friend = selectedFriend
+            let selectedChat = chats[indexPath.row]
+            chatViewContoller.currentChat = selectedChat
         default:
-            fatalError("Unexpected Segue Identifier; \(segue.identifier)")
+            fatalError("Unexpected Segue Identifier; \(segue.identifier ?? "Identifier not found")")
         }
     }
 
     //MARK: Private Methods
-    private func loadFriends() {
-        friends.removeAll()
+    private func loadChats() {
+        chats.removeAll()
         
         let db = Firestore.firestore()
         let currentUserId = Auth.auth().currentUser?.uid
         
         db.collection("users").document(currentUserId!).getDocument { (document, error) in
             let group = DispatchGroup()
-            guard let friendsIds = document?.get("friends") as! [String]? else {
+            guard let chatsIds = document?.get("chats_ids") as! [String: Bool]? else {
                 return
             }
             
-            for id in friendsIds {
+            for id in chatsIds {
                 group.enter()
-                db.collection("users").document(id).getDocument { (document, error) in
-                    let friendName = document?.get("name") as! String
-                    self.friends += [User(id: id, name: friendName)]
+                db.collection("chats").document(id.key).getDocument { (document, error) in
+                    let chatName = document?.documentID as String?
+                    self.chats += [Chat(id: id.key, name: chatName!)]
                     group.leave()
                 }
             }
@@ -175,47 +175,90 @@ class FriendsTableViewController: UITableViewController, FUIAuthDelegate {
     
     //MARK: Unwind
     @IBAction func unwindToFriendList(sender: UIStoryboardSegue) {
+        //addin friend
         if let addFriendViewController = sender.source as? AddFriendViewController, let friendId = addFriendViewController.friendIdTextField.text {
             
             let db = Firestore.firestore()
             let group = DispatchGroup()
             group.enter()
             db.collection("users").document("\(friendId)").getDocument { (document, error) in
+                //checking if friend with id exists
                 if let document = document, document.exists {
                     
                     let currentUserId = Auth.auth().currentUser?.uid
                     
                     db.collection("users").document(currentUserId!).getDocument { (document, error) in
-                        var friends = document?.get("friends") as! [String]
-                        friends += ["\(friendId)"]
                         
-                        db.collection("users").document(currentUserId!).updateData([
-                            "friends": friends
+                        if (document == nil) {
+                            return
+                        }
+                        
+                        group.enter()
+                        //add new chat
+                        let ref = db.collection("chats").addDocument(data: [
+                            "name": "",
+                            "messages": [],
+                            "user_ids": [
+                                currentUserId!: true,
+                                friendId: true
+                            ]
                         ]) { err in
                             if let err = err {
-                                print("Error updating document: \(err)")
+                                print("Error updating adding chat: \(err)")
                                 group.leave()
                             } else {
-                                print("Document successfully updated")
+                                print("Chat added")
                                 group.leave()
                             }
                         }
+                        
+                        group.enter()
+                        //update friend list
+                        db.collection("users").document(currentUserId!).setData([
+                            "friends": [friendId: true],
+                            "chats_ids": [ref.documentID: true]
+                        ], merge: true) { err in
+                            if let err = err {
+                                print("Error updating friend list: \(err)")
+                                group.leave()
+                            } else {
+                                print("Friend list updated")
+                                group.leave()
+                            }
+                        }
+                        
+                        group.enter()
+                        db.collection("users").document(friendId).setData([
+                            "chats_ids": [ref.documentID: true]
+                        ], merge: true) { err in
+                            if let err = err {
+                                print("Error updating friend list: \(err)")
+                                group.leave()
+                            } else {
+                                print("Friend list updated")
+                                group.leave()
+                            }
+                        }
+                        
+                        group.leave()
                     }
                     
-                    db.collection("chats").addDocument(data: [
-                        "user_ids": [currentUserId!, friendId],
-                        "name": "",
-                        "messages": []
-                        ])
                 } else {
-                    print("friend not found")
+                    print("Friend not found")
                     group.leave()
                 }
             }
             
             group.notify(queue: .main) {
-                self.loadFriends()
+                self.loadChats()
             }
         }
+    }
+}
+
+extension Dictionary {
+    
+    static func += (lhs: inout Dictionary, rhs: Dictionary) {
+        lhs.merge(rhs) { (_, new) in new }
     }
 }
