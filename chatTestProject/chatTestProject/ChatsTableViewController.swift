@@ -160,10 +160,29 @@ class ChatsTableViewController: UITableViewController, FUIAuthDelegate {
             
             for id in chatsIds {
                 group.enter()
+                
+                var chatName: String = ""
+                
+                //TODO: Make it optimal
+                //id.key = id of chat room
                 db.collection("chats").document(id.key).getDocument { (document, error) in
-                    let chatName = document?.documentID as String?
-                    self.chats += [Chat(id: id.key, name: chatName!)]
-                    group.leave()
+                    let chatUsers = document?.get("user_ids") as! [String: Bool]
+                    if (chatUsers.count == 2) {
+                        for user in chatUsers {
+                            if (user.key != currentUserId) {
+                                db.collection("users").document(user.key).getDocument { (document, error) in
+                                    //friend name
+                                    chatName = document?.get("name") as! String
+                                    self.chats += [Chat(id: id.key, name: chatName)]
+                                    group.leave()
+                                }
+                            }
+                        }
+                    } else {
+                        chatName = ""
+                        self.chats += [Chat(id: id.key, name: chatName)]
+                        group.leave()
+                    }
                 }
             }
             
