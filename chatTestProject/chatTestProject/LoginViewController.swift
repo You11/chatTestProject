@@ -26,7 +26,7 @@ class LoginViewController: UIViewController, FUIAuthDelegate {
     //after login
     func authUI(_ authUI: FUIAuth, didSignInWith authDataResult: AuthDataResult?, error: Error?) {
         let db = Firestore.firestore()
-        let friends: Array<String> = []
+        let friends: [String: Bool] = [:]
         if let user = authDataResult?.user {
             db.collection("users").document("\(user.uid)").getDocument { (document, error) in
                 if let document = document, !document.exists {
@@ -36,7 +36,7 @@ class LoginViewController: UIViewController, FUIAuthDelegate {
                         "profile_image": user.photoURL ?? "",
                         "date_creation": NSDate.init(),
                         "friends": friends,
-                        "chats_ids": []
+                        "chats_ids": [:]
                     ]) { err in
                         if let err = err {
                             fatalError(err.localizedDescription)
