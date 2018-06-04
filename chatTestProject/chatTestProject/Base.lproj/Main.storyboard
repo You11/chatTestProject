@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="gIj-eH-EMw">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="gIj-eH-EMw">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -20,9 +20,27 @@
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Dialog" id="aqj-a1-Xe1"/>
+                    <navigationItem key="navigationItem" title="Dialog" id="aqj-a1-Xe1">
+                        <barButtonItem key="rightBarButtonItem" systemItem="search" id="JHf-xY-pb4">
+                            <connections>
+                                <action selector="searchButtonClicked:" destination="BYZ-38-t0r" id="Z8T-w1-spx"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="searchButton" destination="JHf-xY-pb4" id="7Ni-Yl-rkb"/>
+                        <outlet property="searchDisplayController" destination="J6p-RW-OKl" id="eL8-DN-9vE"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <searchDisplayController id="J6p-RW-OKl">
+                    <connections>
+                        <outlet property="delegate" destination="BYZ-38-t0r" id="3hW-m0-h1e"/>
+                        <outlet property="searchContentsController" destination="BYZ-38-t0r" id="IUO-zN-k3t"/>
+                        <outlet property="searchResultsDataSource" destination="BYZ-38-t0r" id="m8T-ss-Xny"/>
+                        <outlet property="searchResultsDelegate" destination="BYZ-38-t0r" id="cTi-k2-5GE"/>
+                    </connections>
+                </searchDisplayController>
             </objects>
             <point key="canvasLocation" x="3458" y="105"/>
         </scene>
@@ -88,7 +106,7 @@
             </objects>
             <point key="canvasLocation" x="3456.8000000000002" y="839.73013493253382"/>
         </scene>
-        <!--Friends-->
+        <!--Chats-->
         <scene sceneID="P0G-OJ-a1L">
             <objects>
                 <tableViewController restorationIdentifier="FriendsViewController" storyboardIdentifier="FriendsViewController" id="xnY-Ny-qGt" customClass="ChatsTableViewController" customModule="chatTestProject" customModuleProvider="target" sceneMemberID="viewController">
@@ -124,7 +142,7 @@
                             <outlet property="delegate" destination="xnY-Ny-qGt" id="bx5-Qk-i1j"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Friends" id="ODQ-Ua-EqW">
+                    <navigationItem key="navigationItem" title="Chats" id="ODQ-Ua-EqW">
                         <barButtonItem key="leftBarButtonItem" title="Sign out" id="7BR-VB-d6G">
                             <connections>
                                 <action selector="signOut:" destination="xnY-Ny-qGt" id="nfr-M7-two"/>

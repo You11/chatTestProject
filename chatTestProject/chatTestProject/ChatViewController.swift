@@ -10,15 +10,21 @@ import UIKit
 import MessageKit
 import FirebaseUI
 
-class ChatViewController: MessagesViewController {
+class ChatViewController: MessagesViewController, MessagesDisplayDelegate, MessagesLayoutDelegate, UISearchBarDelegate {
     
-    var messagesList: [Message] = []
+    var loadedMessagesList: [Message] = []
+    var displayedMessagesList: [Message] = []
     var currentChat: Chat? = nil
-    var messageCount = 0
-
+    var loadedMessagesCount = 0
+    @IBOutlet weak var searchButton: UIBarButtonItem!
+    lazy var searchBar = UISearchBar()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //sets title of dialog to friend's name
+        title = currentChat?.name
+
         //check if null somehow
         guard let currentChat = self.currentChat else {
             return
@@ -26,7 +32,7 @@ class ChatViewController: MessagesViewController {
         
         let db = Firestore.firestore()
         db.collection("chats").document(currentChat.id).addSnapshotListener { (document, error) in
-            self.messagesList.removeAll()
+            self.loadedMessagesList.removeAll()
             
             let messagesFromFirestore = document?.get("messages") as! [[String: Any]]
             for message in messagesFromFirestore {
@@ -34,12 +40,15 @@ class ChatViewController: MessagesViewController {
                 let sentDate = message["sentDate"] as! Timestamp
                 let senderId = message["sender"] as! String
                 
-                self.messagesList.append(Message(text: text, sender: Sender(id: senderId, displayName: "user"), messageId: String(self.messageCount), sentDate: sentDate))
+                self.loadedMessagesList.append(Message(text: text, sender: Sender(id: senderId, displayName: "user"), messageId: String(self.loadedMessagesCount), sentDate: sentDate))
                 
-                self.messageCount += 1
+                self.loadedMessagesCount += 1
             }
             
+            self.displayedMessagesList = self.loadedMessagesList
             self.messagesCollectionView.reloadData()
+            
+            self.messagesCollectionView.scrollToBottom()
         }
         
         messageInputBar.sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
@@ -48,20 +57,18 @@ class ChatViewController: MessagesViewController {
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
         // Do any additional setup after loading the view, typically from a nib.
-        
     }
     
     @objc private func sendMessage() {
+
         let db = Firestore.firestore()
         //check if null somehow
         guard let currentChat = self.currentChat?.id else {
             return
         }
-//        let group = DispatchGroup()
-//        group.enter()
         
         let messageText = messageInputBar.inputTextView.text as String
-        let message = Message(text: messageText, sender: Sender(id: getCurrentUserId(), displayName: "user"), messageId: String(self.messageCount), sentDate: Timestamp.init())
+        let message = Message(text: messageText, sender: Sender(id: getCurrentUserId(), displayName: "user"), messageId: String(self.loadedMessagesCount), sentDate: Timestamp.init())
         
         db.collection("chats").document(currentChat).getDocument() { (document, error) in
             var messagesFromFirestore = document?.get("messages") as! [[String: Any]]
@@ -77,25 +84,81 @@ class ChatViewController: MessagesViewController {
             ], merge: true) { err in
                 if let err = err {
                     print("Error sending message: \(err)")
-                    //                group.leave()
                 } else {
                     print("Message sent!")
-                    //                group.leave()
                 }
             }
         }
         
-        messagesList.append(message)
-        self.messageCount += 1
+        loadedMessagesList.append(message)
+        displayedMessagesList.append(message)
+        self.loadedMessagesCount += 1
         
         messagesCollectionView.reloadData()
+        
+        //Clear input view
+        messageInputBar.inputTextView.text = ""
+        
+        messagesCollectionView.scrollToBottom()
+    }
+    
+    @IBAction func searchButtonClicked(_ sender: UIBarButtonItem) {
+        
+        if (navigationItem.titleView == searchBar) {
+            searchInChat()
+        } else {
+            //show search bar
+            navigationItem.titleView = searchBar
+            let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelSearch))
+            navigationItem.leftBarButtonItem = cancelButton
+        }
+    }
+    
+    private func searchInChat() {
+        //performs search
+        guard let needle = searchBar.text else {
+            return
+        }
+        
+        displayedMessagesList.removeAll()
+        
+        for (index, message) in loadedMessagesList.enumerated() {
+            switch message.data {
+            case .text(let text):
+                if text.contains(needle) {
+                    displayedMessagesList.append(loadedMessagesList[index])
+                }
+            case .emoji:
+                return
+            default:
+                return
+            }
+        }
+        
+        messagesCollectionView.reloadData()
+    }
+    
+    
+    @objc private func cancelSearch() {
+        searchBar.text = ""
+        navigationItem.titleView = nil
+        navigationItem.leftBarButtonItem = nil
+        displayedMessagesList = loadedMessagesList
+        messagesCollectionView.reloadData()
+        becomeFirstResponder()
+        messagesCollectionView.scrollToBottom()
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    func heightForLocation(message: MessageType, at indexPath: IndexPath, with maxWidth: CGFloat, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+        return maxWidth
+    }
 }
+
 
 extension ChatViewController: MessagesDataSource {
     func currentSender() -> Sender {
@@ -103,24 +166,11 @@ extension ChatViewController: MessagesDataSource {
     }
     
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
-        return messagesList[indexPath.section]
+        return displayedMessagesList[indexPath.section]
     }
     
     func numberOfMessages(in messagesCollectionView: MessagesCollectionView) -> Int {
-        return messagesList.count
-    }
-    
-}
-
-extension ChatViewController: MessagesDisplayDelegate {
-    
-}
-
-extension ChatViewController: MessagesLayoutDelegate {
-    func heightForLocation(message: MessageType, at indexPath: IndexPath, with maxWidth: CGFloat, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        
-        //TODO: ?
-        return CGFloat(50)
+        return displayedMessagesList.count
     }
     
 }
