@@ -16,7 +16,7 @@ class ChatViewController: MessagesViewController, MessagesDisplayDelegate, Messa
     var displayedMessagesList: [Message] = []
     var currentChat: Chat? = nil
     var loadedMessagesCount = 0
-    @IBOutlet weak var searchButton: UIBarButtonItem!
+    lazy var searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchButtonClicked))
     lazy var searchBar = UISearchBar()
     
     override func viewDidLoad() {
@@ -24,6 +24,9 @@ class ChatViewController: MessagesViewController, MessagesDisplayDelegate, Messa
         
         //sets title of dialog to friend's name
         title = currentChat?.name
+        
+        //set up search button
+        navigationItem.rightBarButtonItem = searchButton
 
         //check if null somehow
         guard let currentChat = self.currentChat else {
@@ -56,7 +59,8 @@ class ChatViewController: MessagesViewController, MessagesDisplayDelegate, Messa
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        searchBar.delegate = self
     }
     
     @objc private func sendMessage() {
@@ -102,19 +106,18 @@ class ChatViewController: MessagesViewController, MessagesDisplayDelegate, Messa
         messagesCollectionView.scrollToBottom()
     }
     
-    @IBAction func searchButtonClicked(_ sender: UIBarButtonItem) {
+    @objc func searchButtonClicked(_ sender: UIBarButtonItem) {
         
-        if (navigationItem.titleView == searchBar) {
-            searchInChat()
-        } else {
-            //show search bar
-            navigationItem.titleView = searchBar
-            let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelSearch))
-            navigationItem.leftBarButtonItem = cancelButton
-        }
+        //show search bar
+        navigationItem.titleView = searchBar
+        let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelSearch))
+        navigationItem.leftBarButtonItem = cancelButton
+        navigationItem.rightBarButtonItem = nil
+        searchBar.becomeFirstResponder()
     }
     
-    private func searchInChat() {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        print("meow?")
         //performs search
         guard let needle = searchBar.text else {
             return
@@ -143,6 +146,7 @@ class ChatViewController: MessagesViewController, MessagesDisplayDelegate, Messa
         searchBar.text = ""
         navigationItem.titleView = nil
         navigationItem.leftBarButtonItem = nil
+        navigationItem.rightBarButtonItem = searchButton
         displayedMessagesList = loadedMessagesList
         messagesCollectionView.reloadData()
         becomeFirstResponder()

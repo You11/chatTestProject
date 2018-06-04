@@ -20,15 +20,8 @@
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Dialog" id="aqj-a1-Xe1">
-                        <barButtonItem key="rightBarButtonItem" systemItem="search" id="JHf-xY-pb4">
-                            <connections>
-                                <action selector="searchButtonClicked:" destination="BYZ-38-t0r" id="Z8T-w1-spx"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Dialog" id="aqj-a1-Xe1"/>
                     <connections>
-                        <outlet property="searchButton" destination="JHf-xY-pb4" id="7Ni-Yl-rkb"/>
                         <outlet property="searchDisplayController" destination="J6p-RW-OKl" id="eL8-DN-9vE"/>
                     </connections>
                 </viewController>
