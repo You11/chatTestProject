@@ -13,6 +13,8 @@ class Chat {
     //MARK: Properties
     var id: String
     var name: String
+    //amount of messages current user didn't read
+    var unreadMessagesCountForCurrentUser: Int = 0
     
     init(id: String, name: String) {
         self.id = id

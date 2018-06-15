@@ -12,6 +12,7 @@ class ChatTableViewCell: UITableViewCell {
 
     //MARK: Properties
     @IBOutlet weak var chatNameLabel: UILabel!
+    @IBOutlet weak var unreadMessagesNumberLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

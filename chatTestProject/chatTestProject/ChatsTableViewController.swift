@@ -74,44 +74,15 @@ class ChatsTableViewController: UITableViewController, FUIAuthDelegate {
 
         let chat = chats[indexPath.row]
         cell.chatNameLabel.text = chat.name
+        //amount of unread messages
+        if (chat.unreadMessagesCountForCurrentUser != 0) {
+            cell.unreadMessagesNumberLabel.text = String(chat.unreadMessagesCountForCurrentUser)
+        } else {
+            cell.unreadMessagesNumberLabel.text = ""
+        }
 
         return cell
     }
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
 
     // MARK: - Navigation
 
@@ -158,43 +129,74 @@ class ChatsTableViewController: UITableViewController, FUIAuthDelegate {
                 return
             }
             
+            var isChatUpdated = false
+            
             for id in chatsIds {
                 group.enter()
                 
                 var chatName: String = ""
                 
                 //TODO: Make it optimal
+                //loads chat
                 //id.key = id of chat room
-                db.collection("chats").document(id.key).getDocument { (document, error) in
-                    let chatUsers = document?.get("user_ids") as! [String: Bool]
+                db.collection("chats").document(id.key).addSnapshotListener { (chatDocument, error) in
+                    self.chats = [Chat]()
+                    if (isChatUpdated == true) {
+                        //TODO: Hack
+                        group.enter()
+                    }
+                    
+                    let chatUsers = chatDocument?.get("user_ids") as! [String: [String: Any]]
+                    //if chat only for 2 users, sets chat name as friend name
                     if (chatUsers.count == 2) {
                         for user in chatUsers {
+                            //runs only one time
                             if (user.key != currentUserId) {
-                                db.collection("users").document(user.key).getDocument { (document, error) in
+                                db.collection("users").document(user.key).getDocument { (userDocument, error) in
                                     //friend name
-                                    chatName = document?.get("name") as! String
-                                    self.chats += [Chat(id: id.key, name: chatName)]
+                                    chatName = userDocument?.get("name") as! String
+                                    let chat = Chat(id: id.key, name: chatName)
+                                    chat.unreadMessagesCountForCurrentUser = self.getUnreadMessagesCount(document: chatDocument)
+                                    self.chats += [chat]
+                                    //TODO: crashes here sometimes
                                     group.leave()
                                 }
                             }
                         }
                     } else {
                         chatName = ""
-                        self.chats += [Chat(id: id.key, name: chatName)]
+                        let chat = Chat(id: id.key, name: chatName)
+                        chat.unreadMessagesCountForCurrentUser = self.getUnreadMessagesCount(document: chatDocument)
+                        self.chats += [chat]
                         group.leave()
                     }
+                    
+                    group.notify(queue: .main) {
+                        isChatUpdated = true
+                        self.tableView.reloadData()
+                    }
                 }
-            }
-            
-            group.notify(queue: .main) {
-                self.tableView.reloadData()
             }
         }
     }
     
+    
+    private func getUnreadMessagesCount(document: DocumentSnapshot?) -> Int {
+        let users = document?.get("user_ids") as! [String: [String: Any]]
+        for user in users {
+            if (user.key == Auth.auth().currentUser?.uid) {
+                let lastReadMessageNumber = user.value["lastReadChatMessageNumber"] as! Int
+                let messages = document?.get("messages") as! [[String: Any]]
+                return messages.count - lastReadMessageNumber
+            }
+        }
+        
+        return -1
+    }
+    
     //MARK: Unwind
     @IBAction func unwindToFriendList(sender: UIStoryboardSegue) {
-        //addin friend
+        //adds friend
         if let addFriendViewController = sender.source as? AddFriendViewController, let friendId = addFriendViewController.friendIdTextField.text {
             
             let db = Firestore.firestore()
@@ -232,7 +234,7 @@ class ChatsTableViewController: UITableViewController, FUIAuthDelegate {
                         }
                         
                         group.enter()
-                        //update friend list
+                        //update user profile with new friend and chat id
                         db.collection("users").document(currentUserId!).setData([
                             "friends": [friendId: true],
                             "chats_ids": [ref.documentID: true]
@@ -246,6 +248,7 @@ class ChatsTableViewController: UITableViewController, FUIAuthDelegate {
                             }
                         }
                         
+                        //update friend profile with new chat
                         group.enter()
                         db.collection("users").document(friendId).setData([
                             "chats_ids": [ref.documentID: true]

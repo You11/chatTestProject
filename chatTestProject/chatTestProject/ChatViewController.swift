@@ -10,30 +10,36 @@ import UIKit
 import MessageKit
 import FirebaseUI
 
-class ChatViewController: MessagesViewController, MessagesDisplayDelegate, MessagesLayoutDelegate, UISearchBarDelegate {
+class ChatViewController: MessagesViewController, UISearchBarDelegate {
     
+    //MARK: Properties
+    //loaded from firebase
     var loadedMessagesList: [Message] = []
+    //displayed on screen, changes when search, etc.
     var displayedMessagesList: [Message] = []
+    //initialized in chatsTableViewController
     var currentChat: Chat? = nil
     var loadedMessagesCount = 0
     lazy var searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchButtonClicked))
     lazy var searchBar = UISearchBar()
     
+    //MARK: Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //sets title of dialog to friend's name
-        title = currentChat?.name
+        let db = Firestore.firestore()
         
-        //set up search button
-        navigationItem.rightBarButtonItem = searchButton
-
         //check if null somehow
         guard let currentChat = self.currentChat else {
             return
         }
         
-        let db = Firestore.firestore()
+        //sets title of dialog to friend's name
+        title = currentChat.name
+        
+        //set up search button
+        navigationItem.rightBarButtonItem = searchButton
+
         db.collection("chats").document(currentChat.id).addSnapshotListener { (document, error) in
             self.loadedMessagesList.removeAll()
             
@@ -46,6 +52,11 @@ class ChatViewController: MessagesViewController, MessagesDisplayDelegate, Messa
                 self.loadedMessagesList.append(Message(text: text, sender: Sender(id: senderId, displayName: "user"), messageId: String(self.loadedMessagesCount), sentDate: sentDate))
                 
                 self.loadedMessagesCount += 1
+            }
+            
+            if (currentChat.unreadMessagesCountForCurrentUser != 0) {
+                currentChat.unreadMessagesCountForCurrentUser = 0
+                self.updateReadMessagesCount()
             }
             
             self.displayedMessagesList = self.loadedMessagesList
@@ -63,6 +74,8 @@ class ChatViewController: MessagesViewController, MessagesDisplayDelegate, Messa
         searchBar.delegate = self
     }
     
+    
+    //MARK: Private Methods
     @objc private func sendMessage() {
 
         let db = Firestore.firestore()
@@ -79,7 +92,9 @@ class ChatViewController: MessagesViewController, MessagesDisplayDelegate, Messa
             let newMessage = [
                 "text": messageText,
                 "sentDate": message.sentDate,
-                "sender": message.sender.id
+                "sender": message.sender.id,
+                "didRead": [ 
+                ]
                 ] as [String : Any]
             messagesFromFirestore.append(newMessage)
             
@@ -100,13 +115,15 @@ class ChatViewController: MessagesViewController, MessagesDisplayDelegate, Messa
         
         messagesCollectionView.reloadData()
         
+        updateReadMessagesCount()
+        
         //Clear input view
         messageInputBar.inputTextView.text = ""
         
         messagesCollectionView.scrollToBottom()
     }
     
-    @objc func searchButtonClicked(_ sender: UIBarButtonItem) {
+    @objc private func searchButtonClicked(_ sender: UIBarButtonItem) {
         
         //show search bar
         navigationItem.titleView = searchBar
@@ -116,7 +133,7 @@ class ChatViewController: MessagesViewController, MessagesDisplayDelegate, Messa
         searchBar.becomeFirstResponder()
     }
     
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    internal func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         print("meow?")
         //performs search
         guard let needle = searchBar.text else {
@@ -141,7 +158,6 @@ class ChatViewController: MessagesViewController, MessagesDisplayDelegate, Messa
         messagesCollectionView.reloadData()
     }
     
-    
     @objc private func cancelSearch() {
         searchBar.text = ""
         navigationItem.titleView = nil
@@ -153,13 +169,15 @@ class ChatViewController: MessagesViewController, MessagesDisplayDelegate, Messa
         messagesCollectionView.scrollToBottom()
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    func heightForLocation(message: MessageType, at indexPath: IndexPath, with maxWidth: CGFloat, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return maxWidth
+    private func updateReadMessagesCount() {
+        //TODO: probably chat will update after that
+        guard let currentChat = self.currentChat else {
+            return
+        }
+        
+        Firestore.firestore().collection("chats").document(currentChat.id).updateData([
+            "user_ids." + getCurrentUserId() + ".lastReadChatMessageNumber": self.loadedMessagesCount
+            ])
     }
 }
 
@@ -178,6 +196,19 @@ extension ChatViewController: MessagesDataSource {
     }
     
 }
+
+
+extension ChatViewController: MessagesDisplayDelegate {
+    
+}
+
+
+extension ChatViewController: MessagesLayoutDelegate {
+    func heightForLocation(message: MessageType, at indexPath: IndexPath, with maxWidth: CGFloat, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+        return maxWidth
+    }
+}
+
 
 private func getCurrentUserId() -> String {
     guard let currentUser = Auth.auth().currentUser?.uid else {
