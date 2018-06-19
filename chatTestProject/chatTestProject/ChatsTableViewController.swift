@@ -14,11 +14,10 @@ class ChatsTableViewController: UITableViewController, FUIAuthDelegate {
     //MARK: Properties
     private var chats = [Chat]()
     private var handle: AuthStateDidChangeListenerHandle?
+    private var chatListener: ListenerRegistration?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        loadChats()
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -39,6 +38,8 @@ class ChatsTableViewController: UITableViewController, FUIAuthDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        loadChats()
+        
         handle = Auth.auth().addStateDidChangeListener { (auth, user) in
             if (auth.currentUser == nil) {
                 let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
@@ -50,6 +51,7 @@ class ChatsTableViewController: UITableViewController, FUIAuthDelegate {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        self.chatListener?.remove()
         Auth.auth().removeStateDidChangeListener(handle!)
     }
 
@@ -123,8 +125,10 @@ class ChatsTableViewController: UITableViewController, FUIAuthDelegate {
         let db = Firestore.firestore()
         let currentUserId = Auth.auth().currentUser?.uid
         
+        //gets user info in firebase
         db.collection("users").document(currentUserId!).getDocument { (document, error) in
             let group = DispatchGroup()
+            //all chat ids user is in
             guard let chatsIds = document?.get("chats_ids") as! [String: Bool]? else {
                 return
             }
@@ -139,8 +143,8 @@ class ChatsTableViewController: UITableViewController, FUIAuthDelegate {
                 //TODO: Make it optimal
                 //loads chat
                 //id.key = id of chat room
-                db.collection("chats").document(id.key).addSnapshotListener { (chatDocument, error) in
-                    self.chats = [Chat]()
+                self.chatListener = db.collection("chats").document(id.key).addSnapshotListener { (chatDocument, error) in
+                    self.chats.removeAll()
                     if (isChatUpdated == true) {
                         //TODO: Hack
                         group.enter()
@@ -187,11 +191,15 @@ class ChatsTableViewController: UITableViewController, FUIAuthDelegate {
             if (user.key == Auth.auth().currentUser?.uid) {
                 let lastReadMessageNumber = user.value["lastReadChatMessageNumber"] as! Int
                 let messages = document?.get("messages") as! [[String: Any]]
-                return messages.count - lastReadMessageNumber
+                var unreadMessageCount = messages.count - lastReadMessageNumber
+                if (unreadMessageCount < 0) {
+                    unreadMessageCount = 0
+                }
+                return unreadMessageCount
             }
         }
         
-        return -1
+        fatalError("unread message count error")
     }
     
     //MARK: Unwind
@@ -277,6 +285,7 @@ class ChatsTableViewController: UITableViewController, FUIAuthDelegate {
         }
     }
 }
+
 
 extension Dictionary {
     

@@ -29,6 +29,8 @@ class ChatViewController: MessagesViewController, UISearchBarDelegate {
         
         let db = Firestore.firestore()
         
+        let batch = db.batch()
+        
         //check if null somehow
         guard let currentChat = self.currentChat else {
             return
@@ -56,7 +58,9 @@ class ChatViewController: MessagesViewController, UISearchBarDelegate {
             
             if (currentChat.unreadMessagesCountForCurrentUser != 0) {
                 currentChat.unreadMessagesCountForCurrentUser = 0
-                self.updateReadMessagesCount()
+                self.updateReadMessagesCount(batch: batch)
+                
+                self.sendBatch(batch: batch)
             }
             
             self.displayedMessagesList = self.loadedMessagesList
@@ -79,6 +83,7 @@ class ChatViewController: MessagesViewController, UISearchBarDelegate {
     @objc private func sendMessage() {
 
         let db = Firestore.firestore()
+        let batch = db.batch()
         //check if null somehow
         guard let currentChat = self.currentChat?.id else {
             return
@@ -98,15 +103,13 @@ class ChatViewController: MessagesViewController, UISearchBarDelegate {
                 ] as [String : Any]
             messagesFromFirestore.append(newMessage)
             
-            db.collection("chats").document(currentChat).setData([
+            batch.setData([
                 "messages": messagesFromFirestore
-            ], merge: true) { err in
-                if let err = err {
-                    print("Error sending message: \(err)")
-                } else {
-                    print("Message sent!")
-                }
-            }
+                ], forDocument: db.collection("chats").document(currentChat),
+                   merge: true)
+            
+            self.updateReadMessagesCount(batch: batch)
+            self.sendBatch(batch: batch)
         }
         
         loadedMessagesList.append(message)
@@ -115,12 +118,21 @@ class ChatViewController: MessagesViewController, UISearchBarDelegate {
         
         messagesCollectionView.reloadData()
         
-        updateReadMessagesCount()
-        
         //Clear input view
         messageInputBar.inputTextView.text = ""
         
         messagesCollectionView.scrollToBottom()
+    }
+    
+    private func sendBatch(batch: WriteBatch) {
+        // Commit the batch
+        batch.commit() { err in
+            if let err = err {
+                print("Error writing batch \(err)")
+            } else {
+                print("Chat updated!")
+            }
+        }
     }
     
     @objc private func searchButtonClicked(_ sender: UIBarButtonItem) {
@@ -169,15 +181,15 @@ class ChatViewController: MessagesViewController, UISearchBarDelegate {
         messagesCollectionView.scrollToBottom()
     }
     
-    private func updateReadMessagesCount() {
+    private func updateReadMessagesCount(batch: WriteBatch) {
         //TODO: probably chat will update after that
         guard let currentChat = self.currentChat else {
             return
         }
         
-        Firestore.firestore().collection("chats").document(currentChat.id).updateData([
+        batch.updateData([
             "user_ids." + getCurrentUserId() + ".lastReadChatMessageNumber": self.loadedMessagesCount
-            ])
+            ], forDocument: Firestore.firestore().collection("chats").document(currentChat.id))
     }
 }
 
