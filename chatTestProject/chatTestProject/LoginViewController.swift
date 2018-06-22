@@ -42,7 +42,7 @@ class LoginViewController: UIViewController, FUIAuthDelegate {
                             fatalError(err.localizedDescription)
                         } else {
                             print("User created!")
-                            self.present(ChatsTableViewController(), animated: true, completion: nil)
+                            self.present(TabBarController(), animated: true, completion: nil)
                         }
                     }
                 }
@@ -53,7 +53,7 @@ class LoginViewController: UIViewController, FUIAuthDelegate {
     }
     
     //login into app
-    @objc func login(controller: UINavigationController) {
+    @objc func login() {
         let authUI = FUIAuth.defaultAuthUI()
         authUI?.delegate = self
         let authViewController = authUI!.authViewController()
@@ -66,7 +66,7 @@ class LoginViewController: UIViewController, FUIAuthDelegate {
         handle = Auth.auth().addStateDidChangeListener { (auth, user) in
             if (user != nil) {
                 let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                let newViewController = storyBoard.instantiateViewController(withIdentifier: "NavigationController") as! UINavigationController
+                let newViewController = storyBoard.instantiateViewController(withIdentifier: "TabBarController") as! UITabBarController
                 self.present(newViewController, animated: true, completion: nil)
             }
         }
